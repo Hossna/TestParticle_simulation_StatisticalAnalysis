@@ -1,4 +1,13 @@
 program readDist
+! Copyritht 2009 by Richard Marchand,
+! Department of Physics, University of Alberta.
+! All rights reserved. This program or any part thereof may not be
+! copied, modified or transferred to other parties without the explicit
+! written consent of the author.
+! The program may be used as is, and the author may not be held
+! responsible for any loss or damage caused by its use.
+!I used this program and made changes to simulate my own case study. 
+!I put comment with my name "Hossna" everywhere inside the code.
 
 **DESCRIPTION**:
 this program reads in a set of distribution functions, and then calculates
