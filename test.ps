@@ -1,0 +1,2049 @@
+%!PS-Adobe-3.0
+%%Title: readDistNew.f90
+%%For: hossna
+%%Creator: a2ps version 4.14
+%%CreationDate: Thu Jul 28 17:09:20 2016
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 4
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed string
+% Version 1.2 1/31/1990
+% Orignal Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ) p
+(include) K
+( ') p
+(values.mdl) str
+(') p n
+(!============================================================================) c n
+(      ) p
+(program) K
+( ) p
+(readDist) L n
+(      ) p
+(use) K
+( ) p
+(VALUES) l n
+(      ) p
+(implicit) K
+( ) p
+(none) K n
+() p n
+(!  this program reads in a set of distribution functions, and then calculates) c n
+(!  various quantities from them.  The distribution functions must be called) N
+(!  distfunct*.out, where * increases from 000001 in steps of 1.  The x) N
+(!  position corresponding to the first distribution function) N
+(!  \(distfunct000001.out\), and the step by which the x position changes from) N
+(!  one distribution function to the next are specified in the file) N
+(!  readDistValues.dat.   ) N
+(!  This program  prints the results in the file properties.out, where the ) N
+(!  first column is the x positions, the second column is the density, the ) N
+(!  third column is the energy, the fourth column is the energy divided by ) N
+(!  the density, and the last three columns are the average momentum or ) N
+(!  velocity.  ) N
+() p n
+(!  variables) c n
+(      ) p
+(integer) K
+( i,j,k) p n
+(!   nCells: the number of cells contained in the distribution function file) c n
+(!   nVertices: the number of vertices contained in the distribution function) N
+(!              file.) N
+(!      integer nCells, nVertices) N
+(!   f: used to hold the function needed to be integrated at each of the) N
+(!      eight vertices of the cells to be integrated over.) N
+(      ) p
+(real) K
+(*8 f\(8\)) p n
+(!   integral: used to hold the value of the integral of the function f) c n
+(!             over a cell.) N
+(      ) p
+(real) K
+(*8 integral) p n
+(!   density: the density calculated from the distribution function.) c n
+(!   vx_bar,vy_bar,vz_bar: the average velocity calculated from the distribution) N
+(!                         function.) N
+(!   px_bar,py_bar,pz_bar: the average momentum calculated from the distribution) N
+(!                         function) N
+(      ) p
+(real) K
+(*8 density,vx_bar,vy_bar,vz_bar,px_bar,py_bar,pz_bar) p n
+(      ) S
+(real) K
+(*8 momentum\(3\),stressTensor\(6\),pintegr,dnintegr) p n
+(!   inputFile: used to, one at a time, hold the names of the distribution) c n
+(!              functions being read in.) N
+(      ) p
+(character) K
+(\() p
+(len) K
+(=60\) inputFile) p n
+(!   numFiles: the number of files containing distribution function.) c n
+(      ) p
+(integer) K
+( numFiles) p n
+(      ) S
+(real) K
+(*8 average,energy) p n
+(      ) S
+(real) K
+(*8 p_bar\(3\)) p n
+() N
+(      ) S
+(namelist) K
+( /readDistValues/ mass,q,type_integration,numFiles,xstart,step) p n
+() N
+(!  1.  read in the values from the namelist) c n
+(      ) p
+(open) K
+(\() p
+(unit) k
+(=9,file=') p
+(readDistValues.dat) str
+(',status=') p
+(old) str
+('\)) p n
+(      ) S
+(read) K
+(\(9,nml=readDistValues\)) p n
+(      ) S
+(close) K
+(\(9\)) p n
+() N
+(!  2.  open a file where the output data is to be printed) c n
+(      ) p
+(open) K
+(\() p
+(unit) k
+(=15,file=') p
+(properties.out) str
+(',status=') p
+(unknown) str
+('\)) p n
+() N
+(      average=0.) N
+(!  3.  do calculations for each of the files, one by one.) c n
+(      dnintegr=0.) p n
+(      pintegr=0.) N
+(      ) S
+(do) K
+( i=1,numFiles) p n
+(!   3.1  read in txyzf, and tindex from the file.) c n
+(         ) p
+(call) K
+( ) p
+(readFile) l
+(\(i\)) p n
+(!   3.2  calculate the density) c n
+(         ) p
+(call) K
+( ) p
+(calculations) l
+(\(1,density\)) p n
+(         density=density) N
+(if) K
+(\(i<=36\)) p
+(then) K n
+(average=average+density) p n
+(endif) K n
+(readDistNew.f90) (Page 1/8) (Dec 12, 09 22:01) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(!   3.3  calculate the average momentum/velocity \(which one) c n
+(!        depends on which integration scheme was used to ) N
+(!        calculate the particle trajectories.  If symplectic) N
+(!        integration was used, the average momentum is ) N
+(!        calculated, while if runge-kutta integration was) N
+(!        used, the average velocity is calculated.\)) N
+(!rm      call calculations\(2,p_bar\)) N
+(!rm      call calculations\(2,momentum\)) N
+(!   3.4  calculate the energy) N
+(!rm      call calculations\(3,energy\)) N
+() p n
+(!   3.5  calculate the flux vector) c n
+(         ) p
+(call) K
+( ) p
+(calculations) l
+(\(4,momentum\)) p n
+() N
+(!   3.6  calculate the stress tensor) c n
+(         ) p
+(call) K
+( ) p
+(calculations) l
+(\(6,stressTensor\)) p n
+() N
+(         dnintegr=dnintegr+) S
+(abs) K
+(\(step\)*1.e-6*density) p n
+(         pintegr=pintegr+) S
+(abs) K
+(\(step\)*\(stressTensor\(1\)+stressTensor\(4\) &) p n
+(           +stressTensor\(6\)\)*1.e9/3.) N
+() N
+(!   4.0  print the results in the output file) c n
+(!rm      write\(15,102\)xstart+\(i-1.\)*step,density,energy,\(energy/density\),&) N
+(!rm           p_bar\(1\),p_bar\(2\),p_bar\(3\)) N
+(!  multiply stressTensor by 2.e-12 to include the electron contribution) N
+(!  and have the pressure in nPa.) N
+(!        write\(15,103\)xstart+\(i-1.\)*step,1.e-6*density,momentum, &) N
+(!          1.e+09*stressTensor,dnintegr,pintegr) N
+(         ) p
+(write) K
+(\(15,103\)xstart+\(i-1.\)*step,density,momentum, &) p n
+(           stressTensor,dnintegr,pintegr) N
+(!   5.0  deallocate the txyzf, and tindex arrays) c n
+(         ) p
+(deallocate) K
+(\(txyzf\)) p n
+(         ) S
+(deallocate) K
+(\(tindex\)) p n
+(      ) S
+(enddo) K n
+() p n
+(!rm print*,'average=',average) c n
+(102 ) p
+(format) K
+(\(7es16.6\)) p n
+(103 ) S
+(format) K
+(\(99es14.6\)) p n
+(      ) S
+(stop) K n
+(      ) p
+(end) K n
+() p n
+(!===========================================================================) c n
+(      ) p
+(subroutine) K
+( ) p
+(readFile) L
+(\(fileNum\)) p n
+(      ) S
+(use) K
+( ) p
+(VALUES) l n
+(      ) p
+(implicit) K
+( ) p
+(none) K n
+() p n
+(!  this subroutine reads in values for txyzf, and tindex from a file.) c n
+() p n
+(!  arguments) c n
+(!   fileNum: the number of the file to be read in.) N
+(      ) p
+(integer) K
+( fileNum) p n
+() N
+(!  local variables) c n
+(      ) p
+(integer) K
+( i,ii,jj) p n
+(!   line: used when reading in the distribution function) c n
+(      ) p
+(character) K
+(\() p
+(len) K
+(=132\)line) p n
+(!   inputFile: used to hold the name of the distribution function being) c n
+(!              read in.) N
+(      ) p
+(character) K
+(\() p
+(len) K
+(=60\) inputFile) p n
+() N
+() N
+(!  1.  make a call to charCompose to get the name of the file to) c n
+(!      be read in.) N
+(      ) p
+(call) K
+( ) p
+(charCompose) l
+(\(') p
+(distfunct) str
+(',fileNum,') p
+(.out) str
+(',inputFile\)) p n
+(      ) S
+(open) K
+(\() p
+(unit) k
+(=2,file=inputFile,status=') p
+(old) str
+('\)) p n
+() N
+(!  2.  read in the values for txyzf, and tindex from the file.) c n
+(1     ) p
+(continue) K n
+(      ) p
+(read) K
+(\(2,101\)line) p n
+(readDistNew.f90) (Page 2/8) (Dec 12, 09 22:01) title
+border
+grestore
+(Printed by hossna) rhead
+(readDistNew.f90) (1/4) (Thursday July 28, 2016) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(101   ) p
+(format) K
+(\(a\)) p n
+(      ) S
+(if) K
+(\() p
+(index) K
+(\(line,') p
+(ZONE T=) str
+('\)==0\)) p
+(go to) K
+( 1) p n
+(      ii=) S
+(index) K
+(\(line,') p
+(N=) str
+('\)) p n
+(      jj=) S
+(index) K
+(\(line,') p
+(E=) str
+('\)) p n
+(      ) S
+(read) K
+(\(line\(ii+2:jj\),*\)nVertices) p n
+(      ) S
+(read) K
+(\(line\(jj+2:132\),*\)nCells) p n
+(      ) S
+(allocate) K
+(\(txyzf\(4,nVertices\)\)) p n
+(      ) S
+(allocate) K
+(\(tindex\(8,nCells\)\)) p n
+(      ) S
+(do) K
+( i=1,nVertices) p n
+(         ) S
+(read) K
+(\(2,*\)txyzf\(1,i\),txyzf\(2,i\),txyzf\(3,i\),txyzf\(4,i\)) p n
+(      ) S
+(enddo) K n
+(      ) p
+(do) K
+( i=1,nCells) p n
+(         ) S
+(read) K
+(\(2,*\)tindex\(1,i\),tindex\(2,i\),tindex\(4,i\),tindex\(3,i\),&) p n
+(              tindex\(5,i\),tindex\(6,i\),tindex\(8,i\),tindex\(7,i\)) N
+(      ) S
+(enddo) K n
+() p n
+(      ) S
+(close) K
+(\(2\)) p n
+(!  3.  the values of txyzf were normalized when they were printed) c n
+(!      in the distribution file, so that the files could be viewed using) N
+(!      Vu \(when they aren't normalized, the numbers are too small\).) N
+(!      The values are now converted back to what they should be.) N
+(if) K
+(\(1 == 2\) ) p
+(then) K
+( ) p
+(!This was used in the original \(Frances's\) version) c n
+(                ) p
+(!of the code, but it is no longer needed.) c n
+(      ) p
+(if) K
+(\(type_integration==1\)) p
+(then) K n
+(         ) p
+(do) K
+( i=1,nVertices) p n
+(            txyzf\(1,i\)=txyzf\(1,i\)*) S
+(sqrt) K
+(\(2.*mass*q\)) p n
+(            txyzf\(2,i\)=txyzf\(2,i\)*) S
+(sqrt) K
+(\(2.*mass*q\)) p n
+(            txyzf\(3,i\)=txyzf\(3,i\)*) S
+(sqrt) K
+(\(2.*mass*q\)) p n
+(!rm         txyzf\(4,i\)=txyzf\(4,i\)/\(sqrt\(2.*mass*q\)*sqrt\(2.*mass*q\)*&) c n
+(!rm              sqrt\(2.*mass*q\)\)) N
+(            txyzf\(4,i\)=txyzf\(4,i\)/) p
+(sqrt) K
+(\(2.*mass*q\)**3) p n
+(         ) S
+(enddo) K n
+(      ) p
+(else) K n
+(         ) p
+(do) K
+( i=1,nVertices) p n
+(            txyzf\(1,i\)=txyzf\(1,i\)*) S
+(sqrt) K
+(\(2.*q/mass\)) p n
+(            txyzf\(2,i\)=txyzf\(2,i\)*) S
+(sqrt) K
+(\(2.*q/mass\)) p n
+(            txyzf\(3,i\)=txyzf\(3,i\)*) S
+(sqrt) K
+(\(2.*q/mass\)) p n
+(!rm         txyzf\(4,i\)=txyzf\(4,i\)/\(sqrt\(2.*q/mass\)*sqrt\(2.*q/mass\)*&) c n
+(!rm              sqrt\(2.*q/mass\)\)) N
+(            txyzf\(4,i\)=txyzf\(4,i\)/) p
+(sqrt) K
+(\(2.*q/mass\)**3) p n
+(         ) S
+(enddo) K n
+(      ) p
+(endif) K n
+(endif) N
+(    ) p n
+(      ) S
+(return) K n
+(      ) p
+(end) K n
+() p n
+(!=======================================================================) c n
+(      ) p
+(subroutine) K
+( ) p
+(calculations) L
+(\() p
+(type) K
+(,calcValue\)) p n
+(      ) S
+(use) K
+( ) p
+(VALUES) l n
+(      ) p
+(implicit) K
+( ) p
+(none) K n
+() p n
+(!  this subroutine calculates various quantities from the distribution) c n
+(!  functions.) N
+() p n
+() N
+(!  arguments) c n
+(!   type specifies the quantity to be calculated.) N
+(!   calcValue: to contain the quantity calculated.) N
+(      ) p
+(integer) K
+( ) p
+(type) K n
+(      ) p
+(real) K
+(*8 calcValue\(*\)) p n
+() N
+(!  local variables) c n
+(      ) p
+(integer) K
+( i,j) p n
+(      ) S
+(real) K
+(*8 f\(8\),integral,density,pxAv,pyAv,pzAv) p n
+() N
+(!  2.  calculate various quantities depending on the value of type) c n
+(!   2.1  if type==1, calculate the density) N
+(      calcValue\(1\)=0.) p n
+(readDistNew.f90) (Page 3/8) (Dec 12, 09 22:01) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ) p
+(if) K
+(\() p
+(type) K
+(==1\)) p
+(then) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(1\)=calcValue\(1\)+integral) N
+(         ) S
+(enddo) K n
+() p n
+(!   2.2  if type==2, calculate the average velocity/momentum) c n
+(      ) p
+(elseif) K
+(\() p
+(type) K
+(==2\)) p
+(then) K
+(  ) p n
+(         density=0.) N
+(         calcValue\(1:3\)=0.) N
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            density=density+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(1\)=calcValue\(1\)+integral) N
+(         ) S
+(enddo) K n
+(         calcValue\(1\)=calcValue\(1\)/density) p n
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(2,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(2\)=calcValue\(2\)+integral) N
+(         ) S
+(enddo) K n
+(         calcValue\(2\)=calcValue\(2\)/density) p n
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(3,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(3\)=calcValue\(3\)+integral) N
+(         ) S
+(enddo) K n
+(         calcValue\(3\)=calcValue\(3\)/density) p n
+(!   2.3  if type==3, calculate the energy) c n
+(      ) p
+(elseif) K
+(\() p
+(type) K
+(==3\)) p
+(then) K n
+(         density=0.) p n
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            density=density+integral) N
+(         ) S
+(enddo) K n
+(         calcValue\(1\)=0.) p n
+(         ) S
+(if) K
+(\(type_integration==1\)) p
+(then) K n
+(            ) p
+(do) K
+( i=1,nCells) p n
+(               ) S
+(do) K
+( j=1,8) p n
+(                  f\(j\)=0.5*\(1./mass\)*\(\(txyzf\(1,tindex\(j,i\)\)*txyzf\(1,tindex\(j,i\)\)) N
+(                       \(txyzf\(2,tindex\(j,i\)\)*txyzf\(2,tindex\(j,i\)\)\)+&) N
+(                       \(txyzf\(3,tindex\(j,i\)\)*txyzf\(3,tindex\(j,i\)\)\)\)*&) N
+(                       txyzf\(4,tindex\(j,i\)\)) N
+(               ) S
+(enddo) K n
+(               ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(               calcValue\(1\)=calcValue\(1\)+integral) N
+(            ) S
+(enddo) K n
+(!            calcValue\(1\)=calcValue\(1\)/density) c n
+(         ) p
+(else) K n
+(            ) p
+(do) K
+( i=1,nCells) p n
+(readDistNew.f90) (Page 4/8) (Dec 12, 09 22:01) title
+border
+grestore
+(Printed by hossna) rhead
+(readDistNew.f90) (2/4) (Thursday July 28, 2016) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(               ) p
+(do) K
+( j=1,8) p n
+(                  f\(j\)=0.5*mass*\(\(txyzf\(1,tindex\(j,i\)\)*txyzf\(1,tindex\(j,i\)\)\)+&) N
+(                       \(txyzf\(2,tindex\(j,i\)\)*txyzf\(2,tindex\(j,i\)\)\)+&) N
+(                       \(txyzf\(3,tindex\(j,i\)\)*txyzf\(3,tindex\(j,i\)\)\)\)*&) N
+(                       txyzf\(4,tindex\(j,i\)\)) N
+(               ) S
+(enddo) K n
+(               ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(               calcValue\(1\)=calcValue\(1\)+integral) N
+(            ) S
+(enddo) K n
+(!            calcValue\(1\)=calcValue\(1\)/density) c n
+(         ) p
+(endif) K n
+(!   2.4  if type==4, calculate the average flux) c n
+(      ) p
+(elseif) K
+(\() p
+(type) K
+(==4\)) p
+(then) K
+(  ) p n
+(if) K
+(\(1 == 1\) ) p
+(then) K n
+(         density=0.) p n
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            density=density+integral) N
+(         ) S
+(enddo) K n
+(else) N
+(  density=1.) p n
+(endif) K n
+() p n
+(         calcValue\(1:3\)=0.) N
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(1\)=calcValue\(1\)+integral/density) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(2,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(2\)=calcValue\(2\)+integral/density) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(3,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(3\)=calcValue\(3\)+integral/density) N
+(         ) S
+(enddo) K n
+(!   2.5  if type==5, calculate the total \(including dynamic\) stress) c n
+(      ) p
+(elseif) K
+(\() p
+(type) K
+(==5\)) p
+(then) K
+(  ) p n
+(         calcValue\(1:6\)=0.) N
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(1,tindex\(j,i\)\)/mass &) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(1\)=calcValue\(1\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(2,tindex\(j,i\)\)/mass &) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(2\)=calcValue\(2\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(readDistNew.f90) (Page 5/8) (Dec 12, 09 22:01) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(3,tindex\(j,i\)\)/mass &) p n
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(3\)=calcValue\(3\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(2,tindex\(j,i\)\)*txyzf\(2,tindex\(j,i\)\)/mass &) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(4\)=calcValue\(4\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(2,tindex\(j,i\)\)*txyzf\(3,tindex\(j,i\)\)/mass &) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(5\)=calcValue\(5\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(3,tindex\(j,i\)\)*txyzf\(3,tindex\(j,i\)\)/mass &) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(6\)=calcValue\(6\)+integral) N
+(         ) S
+(enddo) K n
+(!   2.6  if type==6, calculate the stress tensor) c n
+(      ) p
+(elseif) K
+(\() p
+(type) K
+(==6\)) p
+(then) K
+(  ) p n
+(         calcValue\(1:6\)=0.) N
+(!   2.6.1 first calculate the average momentum) c n
+(         density=0.) p n
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            density=density+integral) N
+(         ) S
+(enddo) K n
+() p n
+(         pxAv=0.) N
+(         pyAv=0.) N
+(         pzAv=0.) N
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(1,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            pxAv=pxAv+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(2,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            pyAv=pyAv+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=txyzf\(3,tindex\(j,i\)\)*txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            pzAv=pzAv+integral) N
+(         ) S
+(enddo) K n
+(         pxAv=pxAv/density) p n
+(         pyAv=pyAv/density) N
+(readDistNew.f90) (Page 6/8) (Dec 12, 09 22:01) title
+border
+grestore
+(Printed by hossna) rhead
+(readDistNew.f90) (3/4) (Thursday July 28, 2016) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(         pzAv=pyAv/density) p n
+() N
+(         ) S
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(1,tindex\(j,i\)\)-pxAv\)*\(txyzf\(1,tindex\(j,i\)\)-pxAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(1\)=calcValue\(1\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(1,tindex\(j,i\)\)-pxAv\)*\(txyzf\(2,tindex\(j,i\)\)-pyAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(2\)=calcValue\(2\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(1,tindex\(j,i\)\)-pxAv\)*\(txyzf\(3,tindex\(j,i\)\)-pzAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(3\)=calcValue\(3\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(2,tindex\(j,i\)\)-pyAv\)*\(txyzf\(2,tindex\(j,i\)\)-pyAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(4\)=calcValue\(4\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(2,tindex\(j,i\)\)-pyAv\)*\(txyzf\(3,tindex\(j,i\)\)-pzAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(5\)=calcValue\(5\)+integral) N
+(         ) S
+(enddo) K n
+(         ) p
+(do) K
+( i=1,nCells) p n
+(            ) S
+(do) K
+( j=1,8) p n
+(               f\(j\)=\(txyzf\(3,tindex\(j,i\)\)-pzAv\)*\(txyzf\(3,tindex\(j,i\)\)-pzAv\)*mass) N
+(                 *txyzf\(4,tindex\(j,i\)\)) N
+(            ) S
+(enddo) K n
+(            ) p
+(call) K
+( ) p
+(integrateCell) l
+(\(i,f,integral\)) p n
+(            calcValue\(6\)=calcValue\(6\)+integral) N
+(         ) S
+(enddo) K n
+(      ) p
+(endif) K n
+(         ) p n
+(      ) S
+(return) K n
+(      ) p
+(end) K n
+(         ) p n
+() N
+(!=======================================================================) c n
+(      ) p
+(subroutine) K
+( ) p
+(charCompose) L
+(\(ch1,i,ch2,outChar\)) p n
+(      ) S
+(IMPLICIT) K
+( ) p
+(NONE) K n
+(!  This returns a character made of ch1, followed by integer i,) c n
+(!  followed by ch2. This is used to construct the outputFileName.) N
+(!) N
+(!  arguments) N
+(      ) p
+(CHARACTER) K
+( \() p
+(LEN) K
+(=*\) :: ch1,ch2,outChar) p n
+(      ) S
+(INTEGER) K
+( i) p n
+(!) c n
+(!  computation) N
+(      ) p
+(if) K
+(\(i < 10\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,101\)ch1//') p
+(00000) str
+(',i,ch2) p n
+(readDistNew.f90) (Page 7/8) (Dec 12, 09 22:01) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+( 101    ) p
+(format) K
+(\(a,i1,a\)) p n
+(      ) S
+(elseif) K
+(\(i < 100\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,102\)ch1//') p
+(0000) str
+(',i,ch2) p n
+( 102    ) S
+(format) K
+(\(a,i2,a\)) p n
+(      ) S
+(elseif) K
+(\(i < 1000\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,103\)ch1//') p
+(000) str
+(',i,ch2) p n
+( 103    ) S
+(format) K
+(\(a,i3,a\)) p n
+(      ) S
+(elseif) K
+(\(i < 10000\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,104\)ch1//') p
+(00) str
+(',i,ch2) p n
+( 104    ) S
+(format) K
+(\(a,i4,a\)) p n
+(      ) S
+(elseif) K
+(\(i < 100000\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,105\)ch1//') p
+(0) str
+(',i,ch2) p n
+( 105    ) S
+(format) K
+(\(a,i5,a\)) p n
+(      ) S
+(elseif) K
+(\(i < 1000000\) ) p
+(then) K n
+(        ) p
+(write) K
+(\(outChar,106\)ch1,i,ch2) p n
+( 106    ) S
+(format) K
+(\(a,i6,a\)) p n
+(      ) S
+(endif) K n
+(      ) p
+(return) K n
+(      ) p
+(end) K n
+(!=====================================================================) c n
+(      ) p
+(subroutine) K
+( ) p
+(integrateCell) L
+(\() p
+(index) K
+(,f,integral\)) p n
+(      ) S
+(use) K
+( ) p
+(VALUES) l n
+(      ) p
+(implicit) K
+( ) p
+(none) K n
+() p n
+(!  this subroutine calculates the integral over one cell.) c n
+() p n
+(!  arguments) c n
+(!   index gives the index of the cell over which the integral is) N
+(!   to be calculated.) N
+(      ) p
+(integer) K
+( ) p
+(index) K n
+(!   f holds the function values at the eight vertices) c n
+(      ) p
+(real) K
+(*8 f\(8\)) p n
+(!   integral is the value of the integral in the cell) c n
+(      ) p
+(real) K
+(*8 integral) p n
+() N
+(!  local variables) c n
+(!   x,y,z: x\(1\) is the minimum value of the x-momentum in the cell,) N
+(!          x\(2\) is the maximum value of the x-momentum in the cell.) N
+(!          Similarly for y, and z.) N
+(      ) p
+(real) K
+(*8 x\(2\),y\(2\),z\(2\)) p n
+() N
+() N
+(!  1.  Find the minimum and maximum values of the momentum) c n
+(!      for the cell.) N
+(!   1.1  Minimum values:) N
+(      x\(1\)=txyzf\(1,tindex\(1,) p
+(index) K
+(\)\)) p n
+(      y\(1\)=txyzf\(2,tindex\(1,) S
+(index) K
+(\)\)) p n
+(      z\(1\)=txyzf\(3,tindex\(1,) S
+(index) K
+(\)\)) p n
+(!   1.2  Maximum values:) c n
+(      x\(2\)=txyzf\(1,tindex\(2,) p
+(index) K
+(\)\)) p n
+(      y\(2\)=txyzf\(2,tindex\(3,) S
+(index) K
+(\)\)) p n
+(      z\(2\)=txyzf\(3,tindex\(5,) S
+(index) K
+(\)\)) p n
+() N
+(!  2.  calculate the integral.) c n
+(      integral=0.125*\(x\(2\)-x\(1\)\)*\(y\(2\)-y\(1\)\)*\(z\(2\)-z\(1\)\)*&) p n
+(           \(f\(1\)+f\(2\)+f\(3\)+f\(4\)+f\(5\)+f\(6\)+f\(7\)+f\(8\)\)) N
+() N
+(!  3.  return) c n
+(      ) p
+(return) K n
+(      ) p
+(end) K n
+(readDistNew.f90) (Page 8/8) (Dec 12, 09 22:01) title
+border
+grestore
+(Printed by hossna) rhead
+(readDistNew.f90) (4/4) (Thursday July 28, 2016) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

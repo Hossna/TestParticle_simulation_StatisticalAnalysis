@@ -1,0 +1,15 @@
+OBJS=	momentsDist.o 
+
+#FLAGS= -r8 -O0 -g -C
+#FLAGS=	-O5 -q64 -b64 
+FLAGS=	-r8 -O3 -warn
+F90=	ifort
+
+momentsdist:	$(OBJS)
+	$(F90) -o momentsdist $(FLAGS) $(OBJS)
+
+momentsDist.o:	momentsDist.f90
+	$(F90) -c $(FLAGS) momentsDist.f90
+
+clean:
+	rm -f $(OBJS) momentsdist

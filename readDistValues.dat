@@ -1,0 +1,24 @@
+mass:  the mass of the particles
+
+q:  the charge of the particles
+
+type_integration: the value of type_integration used by the program 
+		  densityOct to calculate the distribution functions.
+
+numFiles: the number of files containing distribution functions.
+
+xstart: the xposition corresponding to the first distribution function 
+	(distfunct000001.out).
+
+step: the amount by which the x position changes from one distribution 
+      function to the next.
+
+
+&readDistValues
+  mass=1.67262158e-27,
+  q=1.6022e-19,
+  type_integration=1,
+  numFiles=21,
+  xstart=1737000.0,
+  step=173700.0
+/

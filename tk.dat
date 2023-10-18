@@ -1,0 +1,76 @@
+
+*************************
+* simulation parameters *
+*************************
+xyzPosition0: coordinates of the point where the distribution function is to
+              be calculated.
+mass: mass of a particle (amu)
+charge: charge of plasma particles in units of electron charge
+temp: plasma(the spicious you want to track) temperature (eV)
+density0: density of particles in the input region (1/m^3)
+bfield: background magnetic field (T)
+vdrift: velocity of the background plasma
+option: 'testkinetic' to compute particle distribution function from
+        particle backtracking
+        'singletrajectory' to follow a single particle trajectory
+fieldtype:
+ 1: for a charged sphere with approximate Debye shielding
+ 2: for a cylindrical magnetic field discontinuity
+ 3: for your custom field and geometry
+rsphere: radius of the shpere (fieldtype=1,3) or cylinder (2)
+rmax: radius of the sphere delimiting the simulation domain.
+qsphere: charge of the sphere (fieldtype=1) in C
+
+&inputvalues
+   xPosition0=3474000.d0
+   yPosition0=3474000.d0
+   zPosition0=0.d00
+   mass=1.d0
+   charge= 1.d0
+   temp=57.d-1
+   density0=5.0d6
+   bfield=0.d0 5.0000d-09 0.d0
+   b1=5.0000d-09
+   vdrift=295.5d03  0.d00  0.d0
+   option='testkinetic'
+   fieldtype=3
+   rsphere=1737000.d0
+   rmax=5.d0
+   qsphere= 5.d-09
+/
+   vdrift=3.587d05 0.d0 0.d0 for the moon wake
+   vdrift=4.553d04 0.d0 0.d0 for the charged sphere
+   bfield=0.d0 2.276d-03 0.d0 for the charged spehere (rho_i=20cm)
+   bfield=0. 0.9104d-3 0. (rho=50cm)
+   bfield=0.d0 4.553d-02 0.d0 for the moon wake (rho_i=1cm)
+   xPosition0=2084400.d0
+   temp=57.d-1
+   vdrift=295.5d03  0.d00  0.d0 for my paper
+
+****************************
+* velocity grid parameters *
+****************************
+lTinex, lTxyz: initial array sizes. Do not change.
+xmin, ..., zmax: extrema in velocity space, in the octree grid used to
+                 construct the velocity distribution function.
+                 These are normalised to the thermal speed sqrt(T/m).
+levelMin: minimum level of octree subdivisions (use 2 or 3).
+levelMax: maximum level aloowed for octree subdivisions.
+balanced: .true. or .false for a balanced or imbalanced tree
+epsglo: global tolerance parameter for octree cell refinement.
+epsloc: local tolerance marameter for octree cell refinement.
+&domain
+  lTindex=600,
+  lTxyz=400000,
+  xmin=7.d0
+  xmax=24.d0
+  ymin=-4.d-0
+  ymax=20.d-0
+  zmin=-10.d-0
+  zmax=10.d-0
+  levelMin=5,
+  levelMax=20,
+  balance=.true.
+  epsglo=5.d-3
+  epsloc=5.d-3
+/

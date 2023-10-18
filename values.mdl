@@ -1,0 +1,16 @@
+!   mass: the mass of the particles
+!   q: the charge of the particles
+!   type_integration: the type of integration that was used to calculate 
+!                     the particle trajectories. 
+!                   : 1 for symplectic integration.
+!                   : 2 for a runge-kutta integration.
+
+module values
+   real*8 mass,q
+   integer type_integration
+   real*8, allocatable :: txyzf(:,:)
+   integer, allocatable :: tindex(:,:)
+   integer nCells,nVertices
+   real*8 xstart
+   real*8 step
+endmodule values
